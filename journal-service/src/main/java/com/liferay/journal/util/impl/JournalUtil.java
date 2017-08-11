@@ -803,8 +803,26 @@ public class JournalUtil {
 				article.getResourcePrimKey(),
 				new int[] {
 					WorkflowConstants.STATUS_APPROVED,
-					WorkflowConstants.STATUS_IN_TRASH
+					WorkflowConstants.STATUS_DRAFT,
+					WorkflowConstants.STATUS_IN_TRASH,
+					WorkflowConstants.STATUS_PENDING
 				});
+
+		if ((latestArticle != null) &&
+			(latestArticle.isPending() || latestArticle.isDraft())) {
+
+			JournalArticle latestApprovedArticle =
+				JournalArticleLocalServiceUtil.fetchLatestArticle(
+					article.getResourcePrimKey(),
+					new int[] {
+						WorkflowConstants.STATUS_APPROVED,
+						WorkflowConstants.STATUS_IN_TRASH
+					});
+
+			if (latestApprovedArticle != null) {
+				latestArticle = latestApprovedArticle;
+			}
+		}
 
 		if ((latestArticle != null) && !latestArticle.isIndexable()) {
 			return false;
